@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "160740693798",
+    "project_id": "libratto-app",
+    "storage_bucket": "libratto-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160740693798:android:39bf4e84882d9024ba53e7",
+        "android_client_info": {
+          "package_name": "com.example.libratto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbTNeqcvz67C-ndggh7uV--TLQDl8TrTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
