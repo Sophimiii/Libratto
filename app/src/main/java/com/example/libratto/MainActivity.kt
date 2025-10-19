@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.libratto.ui.theme.LibrattoTheme
 import com.example.libratto.view.MostrarPantallaPrincipal
+import com.example.libratto.view.MostrarPantallaPublicarLibro
 import com.example.libratto.view.MostrarPantallaRegistro
 import com.example.libratto.viewModel.RegistroViewModel
 
@@ -26,7 +27,10 @@ class MainActivity : ComponentActivity() {
 //                val registroVM : RegistroViewModel by viewModels()
 //                MostrarPantallaRegistro(registroVM)
 
-                MostrarPantallaPrincipal()
+                //MostrarPantallaPrincipal()
+
+                MostrarPantallaPublicarLibro()
+
             }
         }
     }

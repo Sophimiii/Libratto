@@ -4,11 +4,13 @@ import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -31,6 +33,20 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
     */
+)
+
+//Para colores de los Textfield en toda la app
+@Composable
+fun ColoresTextfield() = TextFieldDefaults.colors(
+    focusedContainerColor = Color.White,
+    unfocusedContainerColor = Color.White,
+    focusedTextColor = Color.Black,
+    unfocusedTextColor = Color.DarkGray,
+    focusedLabelColor = Color.Black,
+    unfocusedLabelColor = Color.DarkGray,
+    cursorColor = Color.Black,
+    focusedIndicatorColor = Color.Black,
+    unfocusedIndicatorColor = Color.Black
 )
 
 @Composable

@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.libratto.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,3 +58,8 @@ fun MostrarPantallaPrincipal() {
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewPantallaPrincipal() {
+    MostrarPantallaPrincipal()
+}
