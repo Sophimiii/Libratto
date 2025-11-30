@@ -17,19 +17,25 @@ import com.example.libratto.view.MostrarPantallaPrincipal
 import com.example.libratto.view.MostrarPantallaPublicarLibro
 import com.example.libratto.view.MostrarPantallaRegistro
 import com.example.libratto.viewModel.RegistroViewModel
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if(FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseApp.initializeApp(this)
+        }
+
         enableEdgeToEdge()
         setContent {
             LibrattoTheme {
-//                val registroVM : RegistroViewModel by viewModels()
-//                MostrarPantallaRegistro(registroVM)
+                val registroVM : RegistroViewModel by viewModels()
+                MostrarPantallaRegistro(registroVM)
 
                 //MostrarPantallaPrincipal()
 
-                MostrarPantallaPublicarLibro()
+                //MostrarPantallaPublicarLibro()
 
             }
         }

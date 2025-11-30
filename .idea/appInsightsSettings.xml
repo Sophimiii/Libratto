@@ -10,9 +10,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.libratto" />
-                  <option name="mobileSdkAppId" value="1:160740693798:android:39bf4e84882d9024ba53e7" />
-                  <option name="projectId" value="libratto-app" />
-                  <option name="projectNumber" value="160740693798" />
+                  <option name="mobileSdkAppId" value="1:507144336311:android:ff12c07b35921e0527ee32" />
+                  <option name="projectId" value="libratto-b2360" />
+                  <option name="projectNumber" value="507144336311" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

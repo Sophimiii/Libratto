@@ -33,71 +33,98 @@ class RegistroViewModel : ViewModel() {
 
 
     //Para guardar datos en la base de datos:
-    val autenticacion = FirebaseAuth.getInstance()
-    val baseDatos = Firebase.firestore
+    private val autenticacion: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val baseDatos = Firebase.firestore
 
 
-    //Variable para mostrar alerta
+    //Para gestionar el mensaje a la hora de registrar un usuario:
+    var mensajeAlerta by mutableStateOf<String?>(null)
+    var operacionExitosa by mutableStateOf<Boolean?>(null)
 
 
     //Métodos:
     fun añadirUsuario(nombre: String, apellidos: String, nombreUsuario: String, correo: String, contraseña: String) {
         autenticacion.createUserWithEmailAndPassword(correo, contraseña)
+            .addOnSuccessListener { resultado ->
+                val uid = resultado.user?.uid ?: return@addOnSuccessListener
+                val nuevoUsuario = Usuario(nombre, apellidos, nombreUsuario, correo, contraseña)
 
-
-        val nuevoUsuario = Usuario(nombre, apellidos, nombreUsuario, correo, contraseña)
-
-        baseDatos.collection("usuarios")
-            .add(nuevoUsuario)
-            .addOnSuccessListener {
-                println("Usuario registrado con éxito")
+                baseDatos.collection("usuarios")
+                    .document(uid)
+                    .set(nuevoUsuario)
+                    .addOnSuccessListener {
+                        operacionExitosa = true
+                        mensajeAlerta = "Usuario registrado con éxito."
+                    }
+                    .addOnFailureListener {
+                        operacionExitosa = false
+                        mensajeAlerta = "Error al registrar el usuario: ${it.message}."
+                    }
             }
             .addOnFailureListener {
-                println("Ha ocurrido un error")
+                operacionExitosa = false
+                mensajeAlerta = "Error al crear el usuario: ${it.message}."
             }
-
     }
 
 
     //Validaciones
     fun validarNombre(): Boolean {
-        val expresionRegex = Regex("^[A-ZÁÉÍÓÚÑa-záéíóúñ]+( [A-ZÁÉÍÓÚÑa-záéíóúñ]+)?$")
-        return if(nombre.trim().matches(expresionRegex)) {
+        val expresionRegex = Regex("^[A-ZÁÉÍÓÚÑa-záéíóúñ]+(?: [A-ZÁÉÍÓÚÑa-záéíóúñ]+)*$")
+        return if (nombre.trim().matches(expresionRegex)) {
             textoErrorNombre = null
             true
         } else {
-            textoErrorNombre = "El nombre solo puede contener letras."
+            textoErrorNombre = "El nombre solo puede contener letras y espacios."
             false
         }
     }
+
 
     fun validarApellidos(): Boolean {
         val expresionRegex = Regex("^[A-ZÁÉÍÓÚÑa-záéíóúñ]+(?: [A-ZÁÉÍÓÚÑa-záéíóúñ]+)*$")
-        return if(apellidos.trim().matches(expresionRegex)) {
+        return if (apellidos.trim().matches(expresionRegex)) {
             textoErrorApellidos = null
             true
         } else {
-            textoErrorApellidos = "Los apellidos solo pueden contener letras."
+            textoErrorApellidos = "Los apellidos solo pueden contener letras y espacios."
             false
         }
     }
 
+
     fun validarNombreUsuario(enResultado: (Boolean) -> Unit) {
+        val expresionRegex = Regex("^[A-Za-z0-9_]+$")
+        val usuario = nombreUsuario.trim()
+
+        if (!usuario.matches(expresionRegex)) {
+            textoErrorNombreUsuario = "Solo se permiten letras, números y guiones bajos."
+            enResultado(false)
+            return
+        }
+
         baseDatos.collection("usuarios")
-            .whereEqualTo("nombreUsuario", nombreUsuario.trim())
+            .whereEqualTo("nombreUsuario", usuario)
             .get()
             .addOnSuccessListener { documentos ->
-                if(documentos.isEmpty) {
+                if (documentos.isEmpty) {
+                    textoErrorNombreUsuario = null
                     enResultado(true)
                 } else {
+                    textoErrorNombreUsuario = "Este nombre de usuario ya está en uso."
                     enResultado(false)
                 }
             }
+            .addOnFailureListener {
+                textoErrorNombreUsuario = "Error al verificar el nombre de usuario."
+                enResultado(false)
+            }
     }
+
 
     fun validarCorreo(): Boolean {
         val expresionRegex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
-        return if(correo.trim().matches(expresionRegex)) {
+        return if (correo.trim().matches(expresionRegex)) {
             textoErrorCorreo = null
             true
         } else {
@@ -106,23 +133,25 @@ class RegistroViewModel : ViewModel() {
         }
     }
 
+
     fun validarContraseña(): Boolean {
         val expresionRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[_!?])[A-Za-z\\d_!?]{8,12}$")
-        return if(contraseña.trim().matches(expresionRegex)) {
+        return if (contraseña.trim().matches(expresionRegex)) {
             textoErrorContraseña = null
             true
         } else {
-            textoErrorContraseña = "La contraseña debe tener entre 8 a 12 caracteres, alguna mayúscula, minúscula, número y símbolo (_!?)"
+            textoErrorContraseña = "Debe tener 8-12 caracteres, mayúsculas, minúsculas, número y símbolo (_!?)."
             false
         }
     }
 
+
     fun validarConfirmacionContraseña(): Boolean {
-        return if(confirmacionContraseña.isNotBlank() && contraseña == confirmacionContraseña) {
+        return if (confirmacionContraseña.isNotBlank() && contraseña == confirmacionContraseña) {
             textoErrorConfirmacionContraseña = null
             true
         } else {
-            textoErrorConfirmacionContraseña = "Las contraseñas no coinciden"
+            textoErrorConfirmacionContraseña = "Las contraseñas no coinciden."
             false
         }
     }
@@ -137,3 +166,14 @@ class RegistroViewModel : ViewModel() {
         return nombreValido && apellidosValidos && correoValido && contraseñaValida && confirmacionContraseñaValida
     }
 }
+
+//FUNCIONAAAAA
+
+/*
+Cosas a arreglar:
+
+3.- CONFIGURATION NOT FOUND de Firebase
+4.- Botón de registrarse (que tenga el formato de los demás)
+5.- Verificar chatgpt para el error otra vez
+6.- Añadir botón de volver en la cinta de arriba con un Scaffold
+ */
