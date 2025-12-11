@@ -4,9 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.launch
 
 class IniciarSesionViewModel : ViewModel() {
     //Variables:
@@ -29,7 +34,39 @@ class IniciarSesionViewModel : ViewModel() {
 
     //Métodos:
     fun iniciarSesion() {
+        if(validarTodo()) {
+            viewModelScope.launch {
+                autentificacion
+                    .signInWithEmailAndPassword(correo.trim(), contraseña.trim())
+                    .addOnCompleteListener { tarea ->
+                        if (tarea.isSuccessful) {
+                            operacionExitosa = true
+                            mensajeAlerta = null
+                        } else {
+                            operacionExitosa = false
+                            mensajeAlerta = manejoErroresSesion(tarea.exception)
+                        }
+                    }
+            }
+        } else {
+            operacionExitosa = false
+            return
+        }
+    }
 
+    private fun manejoErroresSesion(e: Exception?): String {
+        return when (e) {
+            is FirebaseAuthInvalidUserException ->
+                "No existe una cuenta con este correo."
+
+            is FirebaseAuthInvalidCredentialsException ->
+                "El correo o la contraseña son incorrectos. Inténtelo de nuevo."
+
+            is FirebaseAuthException ->
+                "Error de autenticación: ${e.message}"
+
+            else -> "Ha ocurrido un error inesperado"
+        }
     }
 
 
@@ -46,12 +83,14 @@ class IniciarSesionViewModel : ViewModel() {
     }
 
     fun validarContraseña(): Boolean {
-        val expresionRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[_!?])[A-Za-z\\d_!?]{8,12}$")
+        val expresionRegex =
+            Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[_!?])[A-Za-z\\d_!?]{8,12}$")
         return if (contraseña.trim().matches(expresionRegex)) {
             textoErrorContraseña = null
             true
         } else {
-            textoErrorContraseña = "Debe tener 8-12 caracteres, mayúsculas, minúsculas, número y símbolo (_!?)."
+            textoErrorContraseña =
+                "Debe tener 8-12 caracteres, mayúsculas, minúsculas, número y símbolo (_!?)."
             false
         }
     }

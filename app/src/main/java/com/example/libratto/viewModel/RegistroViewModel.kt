@@ -8,8 +8,6 @@ import com.example.libratto.model.Usuario
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class RegistroViewModel : ViewModel() {
     //Variables:
@@ -44,27 +42,32 @@ class RegistroViewModel : ViewModel() {
 
     //Métodos:
     fun añadirUsuario(nombre: String, apellidos: String, nombreUsuario: String, correo: String, contraseña: String) {
-        autenticacion.createUserWithEmailAndPassword(correo, contraseña)
-            .addOnSuccessListener { resultado ->
-                val uid = resultado.user?.uid ?: return@addOnSuccessListener
-                val nuevoUsuario = Usuario(nombre, apellidos, nombreUsuario, correo, contraseña)
+        if(validarTodo()) {
+            autenticacion.createUserWithEmailAndPassword(correo, contraseña)
+                .addOnSuccessListener { resultado ->
+                    val uid = resultado.user?.uid ?: return@addOnSuccessListener
+                    val nuevoUsuario = Usuario(nombre, apellidos, nombreUsuario, correo, contraseña)
 
-                baseDatos.collection("usuarios")
-                    .document(uid)
-                    .set(nuevoUsuario)
-                    .addOnSuccessListener {
-                        operacionExitosa = true
-                        mensajeAlerta = "Usuario registrado con éxito."
-                    }
-                    .addOnFailureListener {
-                        operacionExitosa = false
-                        mensajeAlerta = "Error al registrar el usuario: ${it.message}."
-                    }
-            }
-            .addOnFailureListener {
-                operacionExitosa = false
-                mensajeAlerta = "Error al crear el usuario: ${it.message}."
-            }
+                    baseDatos.collection("usuarios")
+                        .document(uid)
+                        .set(nuevoUsuario)
+                        .addOnSuccessListener {
+                            operacionExitosa = true
+                            mensajeAlerta = "Usuario registrado con éxito."
+                        }
+                        .addOnFailureListener {
+                            operacionExitosa = false
+                            mensajeAlerta = "Error al registrar el usuario: ${it.message}."
+                        }
+                }
+                .addOnFailureListener {
+                    operacionExitosa = false
+                    mensajeAlerta = "Error al crear el usuario: ${it.message}."
+                }
+        } else {
+            operacionExitosa = false
+            return
+        }
     }
 
 
@@ -166,14 +169,3 @@ class RegistroViewModel : ViewModel() {
         return nombreValido && apellidosValidos && correoValido && contraseñaValida && confirmacionContraseñaValida
     }
 }
-
-//FUNCIONAAAAA
-
-/*
-Cosas a arreglar:
-
-3.- CONFIGURATION NOT FOUND de Firebase
-4.- Botón de registrarse (que tenga el formato de los demás)
-5.- Verificar chatgpt para el error otra vez
-6.- Añadir botón de volver en la cinta de arriba con un Scaffold
- */

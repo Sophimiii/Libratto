@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -68,6 +71,7 @@ fun AlertaPersonalizada(texto: String, operacionExitosa: Boolean, onDismiss: () 
     }
 }
 
+
 @Composable
 fun CampoFormulario(
     valor: String,
@@ -75,6 +79,7 @@ fun CampoFormulario(
     validar: () -> Unit,
     textoError: String? = null,
     labelTexto: String,
+    activado: Boolean = true
 ) {
     TextField(
         value = valor,
@@ -87,6 +92,64 @@ fun CampoFormulario(
                 text = labelTexto,
                 fontWeight = FontWeight.Bold
             )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 2.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(8.dp)
+            ),
+        isError = textoError != null,
+        shape = RoundedCornerShape(12.dp),
+        colors = ColoresTextfield(),
+        enabled = activado
+    )
+
+    if (textoError != null) {
+        Text(
+            text = textoError ?: "",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            color = Color(255, 174, 201)
+        )
+    }
+}
+
+
+@Composable
+fun CampoFormularioEdicion(
+    valor: String,
+    cambioValor: (String) -> Unit,
+    validar: () -> Unit,
+    textoError: String? = null,
+    labelTexto: String,
+    editando: Boolean,
+    onClickIcono:() -> Unit
+) {
+    TextField(
+        value = valor,
+        onValueChange = {
+            if(editando) {
+                cambioValor(it)
+                validar()
+            }
+        },
+        label = {
+            Text(
+                text = labelTexto,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        enabled = editando,
+        trailingIcon = {
+            IconButton(onClick = onClickIcono) {
+                Icon(
+                    imageVector = if(editando) Icons.Default.CheckBox else Icons.Default.Edit,
+                    contentDescription = "Editar Campo"
+                )
+            }
         },
         modifier = Modifier
             .fillMaxWidth()

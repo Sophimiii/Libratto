@@ -3,14 +3,12 @@ package com.example.libratto.view
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +20,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,13 +31,33 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.libratto.R
-import com.example.libratto.ui.theme.ColoresTextfield
+import com.example.libratto.navigation.Rutas
+import com.example.libratto.utilities.AlertaPersonalizada
 import com.example.libratto.viewModel.RegistroViewModel
 import com.example.libratto.utilities.CampoFormulario
 
 @Composable
-fun MostrarPantallaRegistro(registroVM: RegistroViewModel) {
+fun RegistroView(registroVM: RegistroViewModel, controladorNavegacion: NavHostController) {
+    registroVM.mensajeAlerta?.let { mensaje ->
+        AlertaPersonalizada(
+            texto = mensaje,
+            operacionExitosa = registroVM.operacionExitosa == true,
+            onDismiss = {
+                registroVM.mensajeAlerta = null
+            }
+        )
+    }
+
+    LaunchedEffect(registroVM.operacionExitosa) {
+        if(registroVM.operacionExitosa == true) {
+            controladorNavegacion.navigate(Rutas.PrincipalView.ruta) {
+                popUpTo(Rutas.RegistroView.ruta) { inclusive = true }
+            }
+        }
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -98,69 +116,45 @@ fun MostrarPantallaRegistro(registroVM: RegistroViewModel) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            TextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Autor") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                //isError = registroVM.textoErrorContraseña != null,
-                shape = RoundedCornerShape(12.dp),
-                colors = ColoresTextfield(),
+            CampoFormulario(
+                valor = registroVM.correo,
+                cambioValor = { registroVM.correo = it },
+                validar = { registroVM.validarCorreo() },
+                textoError = registroVM.textoErrorCorreo,
+                labelTexto = "Correo Electrónico"
             )
-
-//            if (registroVM.textoErrorContraseña != null) {
-//                Text(
-//                    text = registroVM.textoErrorContraseña ?: "",
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color.Red
-//                )
-//            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            TextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Precio") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                //isError = registroVM.textoErrorConfirmacionContraseña != null,
-                shape = RoundedCornerShape(12.dp),
-                colors = ColoresTextfield(),
+            CampoFormulario(
+                valor = registroVM.contraseña,
+                cambioValor = { registroVM.contraseña = it },
+                validar = { registroVM.validarContraseña() },
+                textoError = registroVM.textoErrorContraseña,
+                labelTexto = "Contraseña"
             )
 
-//            if (registroVM.textoErrorConfirmacionContraseña != null) {
-//                Text(
-//                    text = registroVM.textoErrorConfirmacionContraseña ?: "",
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color.Red
-//                )
-//            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            CampoFormulario(
+                valor = registroVM.confirmacionContraseña,
+                cambioValor = { registroVM.confirmacionContraseña = it },
+                validar = { registroVM.validarConfirmacionContraseña() },
+                textoError = registroVM.textoErrorConfirmacionContraseña,
+                labelTexto = "Confirmación Contraseña"
+            )
 
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(
                 onClick = {
-//                    if (registroVM.validarTodo()) {
-//                        registroVM.añadirUsuario(
-//                            registroVM.nombre,
-//                            registroVM.apellidos,
-//                            registroVM.nombreUsuario,
-//                            registroVM.correo,
-//                            registroVM.contraseña
-//                        )
-//                    }
+                    registroVM.añadirUsuario(
+                        registroVM.nombre,
+                        registroVM.apellidos,
+                        registroVM.nombreUsuario,
+                        registroVM.correo,
+                        registroVM.contraseña
+                    )
                 },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -178,9 +172,9 @@ fun MostrarPantallaRegistro(registroVM: RegistroViewModel) {
         }
 
         IconButton(
-            onClick = { },
+            onClick = { controladorNavegacion.navigate(Rutas.IniciarSesionView.ruta) },
             modifier = Modifier
-                .padding(20.dp)
+                .padding(28.dp)
                 .padding(top = 60.dp)
                 .align(Alignment.TopStart),
             colors = IconButtonDefaults.iconButtonColors(

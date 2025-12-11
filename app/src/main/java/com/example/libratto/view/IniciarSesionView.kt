@@ -21,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,13 +31,34 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.libratto.R
+import com.example.libratto.navigation.Rutas
+import com.example.libratto.utilities.AlertaPersonalizada
 import com.example.libratto.utilities.CampoFormulario
 import com.example.libratto.viewModel.IniciarSesionViewModel
 import kotlin.system.exitProcess
 
 @Composable
-fun MostrarPantallaIniciarSesion(inicioSesionVM: IniciarSesionViewModel) {
+fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegacion: NavHostController) {
+    inicioSesionVM.mensajeAlerta?.let { mensaje ->
+        AlertaPersonalizada(
+            texto = mensaje,
+            operacionExitosa = inicioSesionVM.operacionExitosa == true,
+            onDismiss = {
+                inicioSesionVM.mensajeAlerta = null
+            }
+        )
+    }
+
+    LaunchedEffect(inicioSesionVM.operacionExitosa) {
+        if(inicioSesionVM.operacionExitosa == true) {
+            controladorNavegacion.navigate(Rutas.PrincipalView.ruta) {
+                popUpTo(Rutas.IniciarSesionView.ruta) { inclusive = true }
+            }
+        }
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -86,17 +108,7 @@ fun MostrarPantallaIniciarSesion(inicioSesionVM: IniciarSesionViewModel) {
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(
-                onClick = {
-//                    if (registroVM.validarTodo()) {
-//                        registroVM.añadirUsuario(
-//                            registroVM.nombre,
-//                            registroVM.apellidos,
-//                            registroVM.nombreUsuario,
-//                            registroVM.correo,
-//                            registroVM.contraseña
-//                        )
-//                    }
-                },
+                onClick = { inicioSesionVM.iniciarSesion() },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
@@ -124,17 +136,7 @@ fun MostrarPantallaIniciarSesion(inicioSesionVM: IniciarSesionViewModel) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = {
-//                    if (registroVM.validarTodo()) {
-//                        registroVM.añadirUsuario(
-//                            registroVM.nombre,
-//                            registroVM.apellidos,
-//                            registroVM.nombreUsuario,
-//                            registroVM.correo,
-//                            registroVM.contraseña
-//                        )
-//                    }
-                },
+                onClick = { controladorNavegacion.navigate(Rutas.RegistroView.ruta) },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
@@ -153,7 +155,7 @@ fun MostrarPantallaIniciarSesion(inicioSesionVM: IniciarSesionViewModel) {
         IconButton(
             onClick = { exitProcess(0) },
             modifier = Modifier
-                .padding(20.dp)
+                .padding(28.dp)
                 .padding(top = 60.dp)
                 .align(Alignment.TopStart),
             colors = IconButtonDefaults.iconButtonColors(

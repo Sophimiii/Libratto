@@ -1,51 +1,52 @@
 package com.example.libratto.viewModel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.libratto.model.Libro
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class PrincipalViewModel : ViewModel() {
+    //Para guardar datos en la base de datos:
+    private val baseDatos = Firebase.firestore
 
-    // Texto de la barra de búsqueda
-    private val _searchText = MutableStateFlow("")
-    val searchText: StateFlow<String> = _searchText
 
-    // Lista original (fake por ahora, luego Firebase)
-    private val _libros = MutableStateFlow<List<Libro>>(emptyList())
-    val libros: StateFlow<List<Libro>> = _libros
+    //Para controlar el estado de la carga:
+    var cargando by mutableStateOf(true)
 
-    // Resultado filtrado según búsqueda
-    val librosFiltrados: StateFlow<List<Libro>> =
-        combine(_searchText, _libros) { search, lista ->
-            if (search.isBlank()) lista
-            else lista.filter { it.nombre.contains(search, ignoreCase = true) }
-        } as StateFlow<List<Libro>>
 
+    //Para almacenar los libros:
+    var listaLibros by mutableStateOf<List<Libro>>(emptyList())
+
+
+    //Para gestionar el mensaje a la hora de registrar un usuario:
+    var mensajeAlerta by mutableStateOf<String?>(null)
+    var operacionExitosa by mutableStateOf<Boolean?>(null)
+
+
+    //Métodos:
     init {
-        cargarLibrosFake()
+        obtenerLibros()
     }
 
-    private fun cargarLibrosFake() {
-        viewModelScope.launch {
-            val fake = List(20) { index ->
-                Libro(
-                    nombre = "Libro $index",
-                    precio = 10.99,
-                    isbn = TODO(),
-                    descripcion = TODO(),
-                    autor = TODO(),
-                    //imagen = "https://picsum.photos/300?random=$index"
-                )
+    fun obtenerLibros() {
+        cargando = true
+
+        baseDatos.collection("libros")
+            .get()
+            .addOnSuccessListener { resultado ->
+                listaLibros = resultado.documents.mapNotNull { documento ->
+                    documento.toObject(Libro::class.java)?.copy(isbn = documento.id)
+                }
+                cargando = false
+                operacionExitosa = true
             }
-            _libros.value = fake
-        }
-    }
-
-    fun onSearchTextChange(newText: String) {
-        _searchText.value = newText
+            .addOnFailureListener {
+                mensajeAlerta = "Error al cargar libros: ${it.message}"
+                cargando = false
+                operacionExitosa = false
+            }
     }
 }
