@@ -2,9 +2,12 @@ package com.example.libratto.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.libratto.view.CompraLibroView
 import com.example.libratto.view.IniciarSesionView
 import com.example.libratto.view.PerfilUsuarioView
 import com.example.libratto.view.PrincipalView
@@ -17,7 +20,7 @@ import com.example.libratto.viewModel.PublicarLibroViewModel
 import com.example.libratto.viewModel.RegistroViewModel
 
 @Composable
-fun NavegacionCompleto() {
+fun NavegacionCompleta() {
     val controladorNavegacion = rememberNavController()
 
     NavHost(
@@ -47,6 +50,14 @@ fun NavegacionCompleto() {
         composable(Rutas.PerfilUsuarioView.ruta) {
             val perfilUsuarioVM: PerfilUsuarioViewModel = viewModel()
             PerfilUsuarioView(perfilUsuarioVM, controladorNavegacion)
+        }
+
+        composable(
+            route = "${Rutas.CompraLibroView.ruta}/{${Rutas.CompraLibroView.ARG_ISBN}}",
+            arguments = listOf(navArgument(Rutas.CompraLibroView.ARG_ISBN) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val isbn = backStackEntry.arguments?.getString(Rutas.CompraLibroView.ARG_ISBN) ?: ""
+            CompraLibroView(isbn = isbn, controladorNavegacion = controladorNavegacion)
         }
     }
 }

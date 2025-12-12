@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -79,7 +80,7 @@ fun PerfilUsuarioView(perfilUsuarioVM: PerfilUsuarioViewModel, controladorNavega
         ) {
             Text(
                 text = "Perfil de Usuario",
-                fontSize = 30.sp,
+                fontSize = 45.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 color = Color.White,
@@ -96,7 +97,7 @@ fun PerfilUsuarioView(perfilUsuarioVM: PerfilUsuarioViewModel, controladorNavega
                 contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             CampoFormularioEdicion(
                 valor = perfilUsuarioVM.nombre,
@@ -153,7 +154,7 @@ fun PerfilUsuarioView(perfilUsuarioVM: PerfilUsuarioViewModel, controladorNavega
                 }
             )
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(45.dp))
 
             Button(
                 onClick = {
@@ -163,6 +164,7 @@ fun PerfilUsuarioView(perfilUsuarioVM: PerfilUsuarioViewModel, controladorNavega
                         }
                     }
                 },
+                modifier = Modifier.width(200.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,

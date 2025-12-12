@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -70,7 +71,7 @@ fun PublicarLibroView(publicarLibroVM: PublicarLibroViewModel, controladorNavega
         ) {
             Text(
                 text = "Publicar Nuevo Libro",
-                fontSize = 30.sp,
+                fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 color = Color.White,
@@ -87,7 +88,7 @@ fun PublicarLibroView(publicarLibroVM: PublicarLibroViewModel, controladorNavega
                 contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             CampoFormulario(
                 valor = publicarLibroVM.isbn,
@@ -149,6 +150,7 @@ fun PublicarLibroView(publicarLibroVM: PublicarLibroViewModel, controladorNavega
                         publicarLibroVM.precio.toDouble()
                     )
                 },
+                modifier = Modifier.width(200.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,

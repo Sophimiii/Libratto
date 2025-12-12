@@ -71,21 +71,12 @@ class PublicarLibroViewModel : ViewModel() {
     }
 
 
-    fun editarLibro() {
-
-    }
-
-    fun eliminarLibro() {
-
-    }
-
-
     //Validaciones:
     fun validarISBN(): Boolean {
         val limpio = isbn.replace("-", "").replace(" ", "")
         val expresionRegex = Regex("""^(?:\d{9}[\dXx]|\d{13})$""")
 
-        return if (limpio.matches(expresionRegex)) {
+        return if (limpio.matches(expresionRegex) && limpio.isNotEmpty()) {
             textoErrorISBN = null
             true
         } else {
@@ -117,7 +108,7 @@ class PublicarLibroViewModel : ViewModel() {
     }
 
     fun validarPrecio(): Boolean {
-        return if (!precio.trim().isEmpty()) {
+        return if (precio.trim().isNotEmpty()) {
             textoErrorPrecio = null
             true
         } else {

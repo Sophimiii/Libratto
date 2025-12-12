@@ -6,4 +6,8 @@ sealed class Rutas(val ruta: String) {
     object PrincipalView : Rutas("PrincipalView")
     object PublicarLibroView : Rutas("PublicarLibroView")
     object PerfilUsuarioView : Rutas("PerfilUsuarioView")
+    object CompraLibroView : Rutas("CompraLibroView") {
+        fun crearRuta(isbn: String) = "CompraLibroView/$isbn"
+        const val ARG_ISBN = "isbn"
+    }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,6 +38,7 @@ import com.example.libratto.navigation.Rutas
 import com.example.libratto.utilities.AlertaPersonalizada
 import com.example.libratto.viewModel.RegistroViewModel
 import com.example.libratto.utilities.CampoFormulario
+import com.example.libratto.utilities.CampoFormularioContraseña
 
 @Composable
 fun RegistroView(registroVM: RegistroViewModel, controladorNavegacion: NavHostController) {
@@ -126,7 +128,7 @@ fun RegistroView(registroVM: RegistroViewModel, controladorNavegacion: NavHostCo
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            CampoFormulario(
+            CampoFormularioContraseña(
                 valor = registroVM.contraseña,
                 cambioValor = { registroVM.contraseña = it },
                 validar = { registroVM.validarContraseña() },
@@ -136,7 +138,7 @@ fun RegistroView(registroVM: RegistroViewModel, controladorNavegacion: NavHostCo
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            CampoFormulario(
+            CampoFormularioContraseña(
                 valor = registroVM.confirmacionContraseña,
                 cambioValor = { registroVM.confirmacionContraseña = it },
                 validar = { registroVM.validarConfirmacionContraseña() },
@@ -156,6 +158,7 @@ fun RegistroView(registroVM: RegistroViewModel, controladorNavegacion: NavHostCo
                         registroVM.contraseña
                     )
                 },
+                modifier = Modifier.width(200.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
@@ -164,7 +167,7 @@ fun RegistroView(registroVM: RegistroViewModel, controladorNavegacion: NavHostCo
                 border = BorderStroke(2.dp, Color.White)
             ) {
                 Text(
-                    text = "PUBLICAR",
+                    text = "REGISTRARSE",
                     fontFamily = FontFamily.SansSerif,
                     fontSize = 20.sp
                 )

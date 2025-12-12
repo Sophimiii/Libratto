@@ -42,11 +42,14 @@ fun ColoresTextfield() = TextFieldDefaults.colors(
     unfocusedContainerColor = Color.White,
     focusedTextColor = Color.Black,
     unfocusedTextColor = Color.Black,
+    disabledTextColor = Color.Black,
     focusedLabelColor = Color.DarkGray,
     unfocusedLabelColor = Color.DarkGray,
+    disabledLabelColor = Color.Black,
     cursorColor = Color.Black,
     focusedIndicatorColor = Color.Black,
-    unfocusedIndicatorColor = Color.Black
+    unfocusedIndicatorColor = Color.Black,
+    disabledIndicatorColor = Color.Black
 )
 
 @Composable

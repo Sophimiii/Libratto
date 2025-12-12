@@ -2,16 +2,15 @@ package com.example.libratto.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -45,7 +44,10 @@ import com.example.libratto.viewModel.PrincipalViewModel
 fun PrincipalView(principalVM: PrincipalViewModel, controladorNavegacion: NavHostController) {
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            NavigationBar (
+               containerColor = Color.White,
+                contentColor = Color.Black
+            ) {
                 //Función no disponible, propuesta de ampliación
                 NavigationBarItem(
                     selected = false,
@@ -83,15 +85,17 @@ fun PrincipalView(principalVM: PrincipalViewModel, controladorNavegacion: NavHos
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0, 0, 0, 160))
-                    .padding(30.dp),
+                    .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
             ) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2)
                 ) {
                     items(principalVM.listaLibros) { libro ->
-                        ItemLibroCard(libro = libro)
+                        ItemLibroCard(
+                            libro = libro,
+                            controladorNavegacion = controladorNavegacion
+                        )
                     }
                 }
             }
@@ -101,24 +105,31 @@ fun PrincipalView(principalVM: PrincipalViewModel, controladorNavegacion: NavHos
 
 
 @Composable
-fun ItemLibroCard(libro: Libro) {
+fun ItemLibroCard(libro: Libro, controladorNavegacion: NavHostController) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(220.dp),
+            .width(100.dp)
+            .height(220.dp)
+            .padding(15.dp)
+            .clickable(
+                onClick = { controladorNavegacion.navigate(Rutas.CompraLibroView.crearRuta(libro.isbn)) }
+            ),
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(15.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.libro_predeterminado),
                 contentDescription = "Imagen Libro",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp),
-                contentScale = ContentScale.Crop
+                    .height(100.dp),
+                contentScale = ContentScale.Fit
             )
 
             Text(
@@ -126,9 +137,9 @@ fun ItemLibroCard(libro: Libro) {
                 fontWeight = FontWeight.Bold,
             )
 
-//            Text(
-//                text = libro.precio
-//            )
+            Text(
+                text = libro.precio.toString() + "€"
+            )
         }
     }
 }

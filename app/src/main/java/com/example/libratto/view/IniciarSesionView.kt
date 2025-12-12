@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -22,6 +23,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,12 +40,16 @@ import androidx.navigation.NavHostController
 import com.example.libratto.R
 import com.example.libratto.navigation.Rutas
 import com.example.libratto.utilities.AlertaPersonalizada
+import com.example.libratto.utilities.AlertaPersonalizadaConfirmacion
 import com.example.libratto.utilities.CampoFormulario
+import com.example.libratto.utilities.CampoFormularioContraseña
 import com.example.libratto.viewModel.IniciarSesionViewModel
 import kotlin.system.exitProcess
 
 @Composable
 fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegacion: NavHostController) {
+    var mostrarAlertaSalir by remember { mutableStateOf(false) }
+
     inicioSesionVM.mensajeAlerta?.let { mensaje ->
         AlertaPersonalizada(
             texto = mensaje,
@@ -79,13 +88,13 @@ fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegac
         ) {
             Text(
                 text = "Iniciar Sesión",
-                fontSize = 30.sp,
+                fontSize = 45.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             CampoFormulario(
                 valor = inicioSesionVM.correo,
@@ -97,7 +106,7 @@ fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegac
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            CampoFormulario(
+            CampoFormularioContraseña(
                 valor = inicioSesionVM.contraseña,
                 cambioValor = { inicioSesionVM.contraseña = it },
                 validar = { inicioSesionVM.validarContraseña() },
@@ -109,6 +118,7 @@ fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegac
 
             Button(
                 onClick = { inicioSesionVM.iniciarSesion() },
+                modifier = Modifier.width(200.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
@@ -137,6 +147,7 @@ fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegac
 
             Button(
                 onClick = { controladorNavegacion.navigate(Rutas.RegistroView.ruta) },
+                modifier = Modifier.width(200.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
@@ -153,7 +164,7 @@ fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegac
         }
 
         IconButton(
-            onClick = { exitProcess(0) },
+            onClick = { mostrarAlertaSalir = true },
             modifier = Modifier
                 .padding(28.dp)
                 .padding(top = 60.dp)
@@ -166,6 +177,18 @@ fun IniciarSesionView(inicioSesionVM: IniciarSesionViewModel, controladorNavegac
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                 contentDescription = "Salir",
+            )
+        }
+
+        if (mostrarAlertaSalir) {
+            AlertaPersonalizadaConfirmacion(
+                titulo = "Confirmar Salida",
+                mensaje = "¿Desea salir de la aplicación?",
+                onConfirmar = {
+                    mostrarAlertaSalir = false
+                    exitProcess(0)
+                },
+                onCancelar = { mostrarAlertaSalir = false }
             )
         }
     }
